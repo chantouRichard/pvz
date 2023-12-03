@@ -138,6 +138,19 @@ int main()
 	enter(pass1.img, pass1.location.c_str());
 	pass1.movescene(pass1.img, pass1.location.c_str(), pass1.sizex, pass1.sizey);
 	//column_move();
+	//
+		char name[32];
+	cout << "hello" << endl;
+	loadimage(&col, "sucai2/column.png");
+	putimage(200, 0, &col);
+	for (int i = 1; i <= plant_count; i++)
+	{
+		sprintf_s(name, sizeof(name), "sucai2/%d.png", i);
+		loadimage(&plant[i-1], name);
+		putimage(280 + 55 * (i - 1), 6, &plant[i-1]);
+		FlushBatchDraw();
+	}
+	
 	EndBatchDraw();
 	system("pause");
 	return 0;
