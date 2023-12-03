@@ -2,7 +2,6 @@
 #include<graphics.h>
 #include<cstring>
 using namespace std;
-
 //建立关卡类
 class Start
 {
