@@ -2,7 +2,7 @@
 #include<graphics.h>
 #include<cstring>
 using namespace std;
-
+//陈涛嘿嘿
 //植物类型种类
 enum { wandou, xiangrikui, jianguo, plant_count };
 IMAGE plant[plant_count];
