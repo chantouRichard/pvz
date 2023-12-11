@@ -458,11 +458,11 @@ void game::init()
 	h = 0;									//跳跃高度
 	t = 0;									//跳跃时间
 	ibullet = -1;							//子弹的横坐标
-	icoint.x = -1;							//硬币坐标
-	icoint.y = -1;
+	icoint.x = -1;							//硬币的横坐标
+	icoint.y = -1;							//硬币的纵坐标
 	score_frame = 0;						//分数画面帧
-	bomb_frame = 1;							
-	mapbk_frame = 1;
+	bomb_frame = 1;							//
+	mapbk_frame = 1;						//地图移动的画面帧
 	temp.x = -1;
 	temp.y = -1;
 	xbullet = 41 * role.w - 10;
