@@ -502,13 +502,13 @@ void game::init()
 		}
 	}
 	loadimage(&img_mapsky, "res\\mapsky.jpg", XSIZE, YSIZE * 4);		//显示第一关的地图
-	loadimage(&img_p, "res\\role.gif");
-	loadimage(&img_map, "res\\map.gif");
-	loadimage(&img_ani, "res\\ani.gif");
-	loadimage(&img_mapbk, "res\\mapbk.gif");
-	loadimage(&img_home, "res\\home.jpg", XSIZE, YSIZE * 5);
+	loadimage(&img_p, "res\\role.gif");					//显示主角的图片
+	loadimage(&img_map, "res\\map.gif");					//显示地图上的砖块、水管和细节
+	loadimage(&img_ani, "res\\ani.gif");					//显示怪物
+	loadimage(&img_mapbk, "res\\mapbk.gif");				//显示草丛和其他地图背景
+	loadimage(&img_home, "res\\home.jpg", XSIZE, YSIZE * 5);		//显示开始图片和结束图片
 
-	mciSendString("open res\\背景音乐.mp3 alias mymusic1", NULL, 0, NULL);
+	mciSendString("open res\\背景音乐.mp3 alias mymusic1", NULL, 0, NULL);	//加载各种音效
 	mciSendString("open res\\子弹.mp3 alias mymusic2", NULL, 0, NULL);
 	mciSendString("open res\\金币.mp3 alias mymusic3", NULL, 0, NULL);
 	mciSendString("open res\\跳.mp3 alias mymusic4", NULL, 0, NULL);
