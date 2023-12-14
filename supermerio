@@ -130,8 +130,8 @@ void game::start()
 	if (pause == 1)		// 如果按了暂停键
 	{
 		BeginBatchDraw();
-		POINT points[4] = { {XSIZE / 2 - 45, YSIZE / 3}, {XSIZE / 2 + 45, YSIZE / 3}, {XSIZE / 2 + 45, YSIZE / 3 + 90}, {XSIZE / 2 - 45, YSIZE / 3 + 90} };
-		setfillcolor(GREEN);
+		POINT points[4] = { {XSIZE / 2 - 45, YSIZE / 3}, {XSIZE / 2 + 45, YSIZE / 3}, {XSIZE / 2 + 45, YSIZE / 3 + 90}, {XSIZE / 2 - 45, YSIZE / 3 + 90} };//确定刚开始4个金币的位置
+		setfillcolor(GREEN);	//设置暂停菜单的界面颜色：绿色
 		fillpolygon(points, 4);
 		setbkmode(TRANSPARENT);
 		settextstyle(20, 0, "黑体");
@@ -154,7 +154,7 @@ void game::start()
 
 		FlushBatchDraw();
 
-		MOUSEMSG m;
+		MOUSEMSG m;	//接受鼠标信息
 		while (true)
 		{
 			BeginBatchDraw();
@@ -463,11 +463,11 @@ void game::init()
 	score_frame = 0;						//分数画面帧
 	bomb_frame = 1;							//
 	mapbk_frame = 1;						//地图移动的画面帧
-	temp.x = -1;
-	temp.y = -1;
-	xbullet = 41 * role.w - 10;
+	temp.x = -1;							
+	temp.y = -1;							
+	xbullet = 41 * role.w - 10;					//子弹发射时的初始位置
 	ybullet = 4 * role.h - 25;
-	get_bullet = 0;
+	get_bullet = 0;		//初始化
 	win = 0;
 	pause = 0;
 	score = 0;
@@ -501,7 +501,7 @@ void game::init()
 			bomb[i].y = -1;
 		}
 	}
-	loadimage(&img_mapsky, "res\\mapsky.jpg", XSIZE, YSIZE * 4);
+	loadimage(&img_mapsky, "res\\mapsky.jpg", XSIZE, YSIZE * 4);		//显示第一关的地图
 	loadimage(&img_p, "res\\role.gif");
 	loadimage(&img_map, "res\\map.gif");
 	loadimage(&img_ani, "res\\ani.gif");
