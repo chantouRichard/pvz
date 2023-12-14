@@ -1,5 +1,5 @@
 #include <graphics.h>
-#include <conio.h>
+#include <conio.h>	//插入头文件，实现控制台的输入输出、实现清屏
 #include <math.h>
 #include "MyTimer.h"				// 一个保证精确延时的类。下载于 easyx 官网
 #include<iostream>
@@ -41,7 +41,7 @@ struct ROLE
 struct MAP			// 储存地图的结构体
 {
 	int id;
-	int x;
+	int x;			//地图的位置
 	int y;
 };
 struct BULLET		// 子弹的结构体
@@ -50,21 +50,21 @@ struct BULLET		// 子弹的结构体
 	int y;
 	int turn;
 	int iframe;
-	int id;
+	int id;		//子弹移动动画效果
 };
 struct COINT		// 硬币的结构体
 {
 	int x;
 	int y;
-	double iframe;
+	double iframe;	//实现硬币的旋转动画
 };
 struct ENEMY		// 敌人的结构体
 {
 	int id;
 	int x;
 	int y;
-	int turn;
-	int iframe;
+	int turn;	//判断敌人是否改变移动方向
+	int iframe;	
 };
 class game			// 整个游戏只设置了这一个类
 {
