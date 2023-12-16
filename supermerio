@@ -716,7 +716,7 @@ void game::move()
 						else
 							enemy[i].x -= STEP;
 					}
-					if (is_land(enemy[i]) == 0 || is_l_touch(3) == 1 || is_r_touch(3) == 1)
+					if (is_land(enemy[i]) == 0 || is_l_touch(3) == 1 || is_r_touch(3) == 1)//判断敌人的左右和下面是否和墙接触，如果遇到没有地面的地方就掉头，防止敌人掉下去
 					{
 						if (enemy[i].turn == 1)
 							enemy[i].x -= STEP;
@@ -724,13 +724,13 @@ void game::move()
 							enemy[i].x += STEP;
 						enemy[i].turn *= -1;
 					}
-					enemy[i].iframe *= -1;
+					enemy[i].iframe *= -1;//敌人的动画只有两帧，所以每经过一个循环就改变一个图片
 				}
 			}
 		}
 		int boom = 0;
 		if (is_b_touch(2) == 1)			// 如果主角“踩到”敌人
-			boom = 1;
+			boom = 1;//boom=1可以触发爆炸动画
 		getbullet();					// 获取子弹
 		if (get_bullet == 1)
 			shoot();
@@ -739,13 +739,13 @@ void game::move()
 		show();
 		FlushBatchDraw();
 
-		if ((is_l_touch(2) == 1 || is_r_touch(2) == 1))
+		if ((is_l_touch(2) == 1 || is_r_touch(2) == 1))//如果主角碰到敌人的左边或者右边
 		{
-			mciSendString("stop mymusic1", NULL, 0, NULL);
+			mciSendString("stop mymusic1", NULL, 0, NULL);//播放死亡音乐
 			mciSendString("play mymusic10", NULL, 0, NULL);
-			life--;
-			pause = 0;
-			putimage(role.x, role.y, role.w, role.h, &img_p, 2 * role.w, role.h, SRCAND);
+			life--;//生命值减一
+			pause = 0;//暂停一段时间
+			putimage(role.x, role.y, role.w, role.h, &img_p, 2 * role.w, role.h, SRCAND);//显示黑屏的生命值图片
 			putimage(role.x, role.y, role.w, role.h, &img_p, 2 * role.w, 0, SRCPAINT);
 			return;
 		}
