@@ -909,9 +909,9 @@ void game::show()
 	}
 	for (i = 0; i < 20; i++)			// 显示子弹
 	{
-		if (get_bullet == 1)
+		if (get_bullet == 1)//判断主角是否拿到武器
 		{
-			if (bullet[i].id == 1)
+			if (bullet[i].id == 1)//显示子弹的动画
 			{
 				if (bullet[i].iframe == 1)
 				{
