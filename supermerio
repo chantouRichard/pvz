@@ -525,7 +525,7 @@ void game::init()
 
 	for (int i = 0; i < 300; i++)					// 以下都是编辑地图
 	{
-		map[i].id = 1;
+		map[i].id = 1;//
 		map[i].x = i % 100 * role.w;
 		if (i < 100)
 			map[i].y = 9 * role.h;
