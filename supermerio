@@ -758,7 +758,7 @@ void game::show()
 	putimage(xmapsky, 0, &img_mapsky);	// 显示背景
 	putimage(XSIZE + xmapsky, 0, &img_mapsky);
 
-	if (is_touch() == 1)
+	if (is_touch() == 1)//判断是否吃到硬币
 		score_frame = 1;
 	if (score_frame != 0)					// 碰到硬币，显示得分
 	{
@@ -783,14 +783,14 @@ void game::show()
 		default:
 			break;
 		}
-		score_frame += 0.2;
-		if (score_frame == 5)
+		score_frame += 0.2;//金币动画播放缓冲时间
+		if (score_frame == 5)//金币一共有4帧动画
 			score_frame = 0;
 	}
 	int i;
 	for (i = 0; i < 350; i++)			// 显示地图，天空上的地图和硬币
 	{
-		if (map[i].id == 1)
+		if (map[i].id == 1)//加载各种地图方块和金币
 		{
 			putimage(xmap + map[i].x, map[i].y, role.w, role.h, &img_map, 0, 0);
 		}
@@ -822,7 +822,7 @@ void game::show()
 			}
 			else if (map[i].id == 5)
 			{
-				switch (int(mapbk_frame))
+				switch (int(mapbk_frame))//加载水流和草丛的动画帧图片
 				{
 				case 1:
 					putimage(xmap + map[i].x, map[i].y, 3 * role.w, 2 * role.h, &img_mapbk, 0, 2 * role.h, SRCAND);
@@ -838,7 +838,7 @@ void game::show()
 			}
 			else if (map[i].id == 6)
 			{
-				switch (int(mapbk_frame))
+				switch (int(mapbk_frame))//水流和草丛只有两帧动画，因此只需要两种情况
 				{
 				case 1:
 					putimage(xmap + map[i].x, map[i].y, 3 * role.w, 2 * role.h, &img_mapbk, 0, 6 * role.h, SRCAND);
@@ -852,17 +852,17 @@ void game::show()
 					break;
 				}
 			}
-			mapbk_frame += 0.03;
+			mapbk_frame += 0.03;//同样是动画的缓冲时间，避免动画太快
 			if (mapbk_frame > 2.9)
 			{
-				mapbk_frame = 1;
+				mapbk_frame = 1;//重新播放动画
 			}
 		}
 		if (i < 50)
 		{
 			if (coint[i].x != -1 || coint[i].y != -1)
 			{
-				switch ((int)coint[i].iframe)
+				switch ((int)coint[i].iframe)//加载金币旋转的动画帧
 				{
 				case 1:
 					putimage(xmap + coint[i].x, coint[i].y, role.w, role.h, &img_ani, 0, 9 * role.h, SRCAND);
@@ -884,7 +884,7 @@ void game::show()
 					break;
 				}
 				coint[i].iframe += 0.125;
-				if (coint[i].iframe == 5)
+				if (coint[i].iframe == 5)//金币动画的缓冲时间
 					coint[i].iframe = 1;
 			}
 		}
@@ -892,7 +892,7 @@ void game::show()
 	if (get_bullet == 0)
 	{
 
-		switch (int(mapbk_frame))
+		switch (int(mapbk_frame))//加载武器的初始位置和动画
 		{
 		case 1:
 			putimage(xmap + xbullet, ybullet, 52, 25, &img_ani, 0, 12 * role.h + 25, SRCAND);
