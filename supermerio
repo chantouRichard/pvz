@@ -522,16 +522,16 @@ void game::init()
 
 	for (i = 0; i < 300; i++)					// 以下都是编辑地图
 	{
-		map[i].id = 1;
-		map[i].x = i % 100 * role.w;
+		map[i].id = 1;//将所有方块都先定义为普通砖块
+		map[i].x = i % 100 * role.w;//for循环中的300表示地图主角脚下的三层方块，每一层有100个方块
 		if (i < 100)
-			map[i].y = 9 * role.h;
-		else if (i >= 100 && i < 200)
+			map[i].y = 9 * role.h;//第一层方块的y坐标
+		else if (i >= 100 && i < 200)//第二层的纵坐标
 			map[i].y = 10 * role.h;
-		else
+		else//第三层的纵坐标
 			map[i].y = 11 * role.h;
 	}
-	map[15].id = 1, map[15].x = 18 * role.w, map[15].y = 8 * role.h;
+	map[15].id = 1, map[15].x = 18 * role.w, map[15].y = 8 * role.h;//地图砖块变高一层
 	map[115].id = 1, map[115].x = 19 * role.w, map[115].y = 8 * role.h;
 	map[215].id = 1, map[215].x = 20 * role.w, map[215].y = 8 * role.h;
 
@@ -541,9 +541,9 @@ void game::init()
 
 	map[17].id = 1, map[17].x = 24 * role.w, map[17].y = 8 * role.h;
 	map[117].id = 1, map[117].x = 25 * role.w, map[117].y = 8 * role.h;
-	map[217].id = 1, map[217].x = 26 * role.w, map[217].y = 8 * role.h;
+	map[217].id = 1, map[217].x = 26 * role.w, map[217].y = 8 * role.h;//将上面9个方块设置高一层
 
-	map[300].id = 2, map[300].x = 10 * role.w, map[300].y = 6 * role.h;
+	map[300].id = 2, map[300].x = 10 * role.w, map[300].y = 6 * role.h;//id=2代表使用白色的放置金币的方块
 	map[301].id = 2, map[301].x = 11 * role.w, map[301].y = 6 * role.h;
 	map[302].id = 2, map[302].x = 12 * role.w, map[302].y = 6 * role.h;
 
@@ -578,7 +578,7 @@ void game::init()
 
 	map[349].id = 6, map[349].x = 97 * role.w, map[349].y = 7 * role.h;
 
-	for (i = 64; i < 300; i += 100)
+	for (i = 64; i < 300; i += 100)//这个for循环用来把有水流的地方的砖块去掉，方便给水流空出位置
 	{
 		map[i].id = 0; map[i].x = -1; map[i].y = -1;
 		map[i + 1].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
@@ -592,12 +592,12 @@ void game::init()
 		map[i + 12].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 		map[i + 13].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 	}
-	map[64].id = 4, map[64].x = 64 * role.w, map[64].y = 10 * role.h;
+	map[64].id = 4, map[64].x = 64 * role.w, map[64].y = 10 * role.h;//放置水流图片
 	map[71].id = 4, map[71].x = 71 * role.w, map[71].y = 10 * role.h;
 	map[75].id = 4, map[75].x = 75 * role.w, map[75].y = 10 * role.h;
 
-	enemy[0].id = 1; enemy[0].x = 6 * role.w; enemy[0].y = 8 * role.h; enemy[0].turn = 1; enemy[0].iframe = 1;
-	enemy[1].id = 1; enemy[1].x = 8 * role.w; enemy[1].y = 8 * role.h; enemy[1].turn = 1; enemy[1].iframe = 1;
+	enemy[0].id = 1; enemy[0].x = 6 * role.w; enemy[0].y = 8 * role.h; enemy[0].turn = 1; enemy[0].iframe = 1;//一共设置12个敌人
+	enemy[1].id = 1; enemy[1].x = 8 * role.w; enemy[1].y = 8 * role.h; enemy[1].turn = 1; enemy[1].iframe = 1;//同时初始化他们的位置和运动方向
 	enemy[2].id = 1; enemy[2].x = 27 * role.w; enemy[2].y = 8 * role.h; enemy[2].turn = 1; enemy[2].iframe = 1;
 	enemy[3].id = 1; enemy[3].x = 29 * role.w; enemy[3].y = 8 * role.h; enemy[3].turn = 1; enemy[3].iframe = 1;
 	enemy[4].id = 1; enemy[4].x = 31 * role.w; enemy[4].y = 8 * role.h; enemy[4].turn = 1; enemy[4].iframe = 1;
@@ -609,7 +609,7 @@ void game::init()
 	enemy[10].id = 1; enemy[10].x = 69 * role.w; enemy[10].y = 2 * role.h; enemy[10].turn = 1; enemy[10].iframe = 1;
 	enemy[11].id = 1; enemy[11].x = 85 * role.w; enemy[11].y = 8 * role.h; enemy[11].turn = 1; enemy[11].iframe = 1;
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 4; i++)//设置关卡刚刚开始的12个金币的位置
 	{
 		coint[i].x = (10 + i) * role.w;
 		coint[i].y = 5 * role.h;
@@ -620,7 +620,7 @@ void game::init()
 		coint[i + 8].x = 74 * role.w;
 		coint[i + 8].y = (4 + i) * role.w;
 	}
-	for (i = 12; i < 18; i++)
+	for (i = 12; i < 18; i++)//设置最后快结束的时候的12个金币的位置
 	{
 		coint[i].x = (83 - 12 + i) * role.w;
 		coint[i].y = 6 * role.h;
@@ -644,19 +644,19 @@ void game::move()
 			k = 0;
 		if (_kbhit() && win == 0)
 		{
-			c = GetCommand();
+			c = GetCommand();//控制主角的上下左右的移动
 			if (c & CMD_LEFT)
 				left();
 			if (c & CMD_RIGHT)
 				right();
 			if ((c & CMD_UP) && role.jump == 0)
 				up();
-			if (c & CMD_ESC)
+			if (c & CMD_ESC)//按esc键退出或暂停游戏
 			{
 				pause = 1;
 				break;
 			}
-			if (c & CMD_SHOOT && get_bullet == 1)
+			if (c & CMD_SHOOT && get_bullet == 1)//发射子弹的按键控制
 			{
 				if (n == 0)
 				{
@@ -664,7 +664,7 @@ void game::move()
 					n = 1;
 				}
 				n++;
-				if (k % 10 == 0 && n > 10)
+				if (k % 10 == 0 && n > 10)//k%10用来给子弹设置冷却时间
 				{
 					init_shoot();
 				}
@@ -672,12 +672,12 @@ void game::move()
 			else
 				n = 0;
 		}
-		if (-xmap + role.x == 97 * role.w)
+		if (-xmap + role.x == 97 * role.w)//判断主角是否到达终点
 		{
-			mciSendString("stop mymusic1", NULL, 0, NULL);
+			mciSendString("stop mymusic1", NULL, 0, NULL);//到达终点之后播放胜利音乐
 			mciSendString("play mymusic9", NULL, 0, NULL);
 		}
-		if (-xmap + role.x > 95 * role.w)
+		if (-xmap + role.x > 95 * role.w)//到达终点
 		{
 
 			win = 1;
@@ -689,11 +689,11 @@ void game::move()
 			role.jump = 1;
 		if (role.jump == 1)
 			fall();
-		if (isdie() == 1)
+		if (isdie() == 1)//判断主角是否死亡，生命值减一
 		{
-			mciSendString("stop mymusic1", NULL, 0, NULL);
+			mciSendString("stop mymusic1", NULL, 0, NULL);//播放死亡音乐
 			mciSendString("play mymusic11", NULL, 0, NULL);
-			life--;
+			life--;//生命值减一
 			return;
 		}
 		if (k % 2 == 0)				// 敌人的运动
@@ -704,7 +704,7 @@ void game::move()
 				{
 					if (is_land(enemy[i]) == 1)
 					{
-						if (enemy[i].turn == 1)
+						if (enemy[i].turn == 1)//turn=1代表正向移动，turn=-1表示反向移动
 							enemy[i].x += STEP;
 						else
 							enemy[i].x -= STEP;
