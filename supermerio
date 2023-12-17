@@ -550,7 +550,7 @@ void game::init()
 	map[301].id = 2, map[301].x = 11 * role.w, map[301].y = 6 * role.h;
 	map[302].id = 2, map[302].x = 12 * role.w, map[302].y = 6 * role.h;
 
-	map[303].id = 3, map[303].x = 36 * role.w, map[303].y = 7 * role.h;
+	map[303].id = 3, map[303].x = 36 * role.w, map[303].y = 7 * role.h;//放置水管图片
 	map[304].id = 3, map[304].x = 44 * role.w, map[304].y = 7 * role.h;
 
 	map[305].id = 2, map[305].x = 40 * role.w, map[305].y = 4 * role.h;
@@ -756,7 +756,7 @@ void game::show()
 	if (xmapsky == -XSIZE)
 		xmapsky = 0;
 	putimage(xmapsky, 0, &img_mapsky);	// 显示背景
-	putimage(XSIZE + xmapsky, 0, &img_mapsky);
+	putimage(XSIZE + xmapsky, 0, &img_mapsky);//两张背景图拼接覆盖原来的图片实现画面不会重叠
 
 	if (is_touch() == 1)//判断是否吃到硬币
 		score_frame = 1;
@@ -973,14 +973,14 @@ void game::show()
 	}
 	int n = score;
 	char s1[20] = "当前得分：";
-	char s2[10];
-	_itoa(n, s2, 10);
+	char s2[10];		//显示当前得分
+	_itoa(n, s2, 10);	//将整形转换成字符串，方便下面输出文字
 	RECT r1 = { 10,10,110,40 };
 	RECT r2 = { 110,10,150,40 };
 	settextstyle(20, 0, "宋体");
 	drawtext(s1, &r1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 	drawtext(s2, &r2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-	if (role.iframe == 1)					// 显示主角
+	if (role.iframe == 1)					// 显示主角第几帧的图片和主角的方向
 	{
 		if (role.turn == 1)
 		{
@@ -1009,7 +1009,7 @@ void game::show()
 }
 int game::isdie()
 {
-	if (role.y >= YSIZE)
+	if (role.y >= YSIZE)		//判断主角是否掉出地图，会导致死亡
 		return 1;
 	else
 		return 0;
@@ -1035,7 +1035,7 @@ int game::GetCommand()
 }
 void game::left()
 {
-	role.iframe *= -1;
+	role.iframe *= -1;		//改变方向和图片
 	role.turn = -1;
 	role.x -= STEP;
 
@@ -1052,23 +1052,23 @@ void game::right()
 
 	if (is_r_touch(1) == 1)
 		role.x -= STEP;
-	if (role.x > role.xright && (-xmap + role.x < 90 * role.w))
+	if (role.x > role.xright && (-xmap + role.x < 90 * role.w))	//如果主角越过地图中间，地图会跟随主角移动
 	{
 		role.x -= STEP;
-		xmapsky -= 1;
+		xmapsky -= 1;		//背景图片的移动速度比主角移动速度慢
 		xmap -= STEP;
 	}
 }
 void game::up()
 {
-	mciSendString("play mymusic4 from 0", NULL, 0, NULL);
+	mciSendString("play mymusic4 from 0", NULL, 0, NULL);//跳跃的音乐
 	role.iframe *= -1;
 	v0 = -sqrt(2 * G * HIGH);
 	role.jump = 1;
 }
 void game::init_shoot()
 {
-	mciSendString("play mymusic2 from 0", NULL, 0, NULL);
+	mciSendString("play mymusic2 from 0", NULL, 0, NULL);//发射子弹的音乐
 	ibullet++;
 	if (ibullet == 20)
 		ibullet = 0;
@@ -1077,7 +1077,7 @@ void game::init_shoot()
 	bullet[ibullet].turn = role.turn;	//射击方向与人物一致
 
 	if (bullet[ibullet].turn == 1)
-		bullet[ibullet].x = role.x + 10;
+		bullet[ibullet].x = role.x + 10;	//设置子弹的初始位置
 	else
 		bullet[ibullet].x = role.x - 26;
 }
