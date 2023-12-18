@@ -1123,15 +1123,15 @@ int game::is_l_touch(int id)
 		{
 			if (enemy[i].id != 0)
 			{
-				POINT m[2];
+				POINT m[2];	//定义两个点，判断主角是否碰到怪物
 
-				m[0].x = enemy[i].x;
+				m[0].x = enemy[i].x;	//确定怪物的横纵坐标
 				m[0].y = enemy[i].y;
 
 				m[1].x = enemy[i].x + role.w;
 				m[1].y = enemy[i].y;
 
-				if ((y - m[1].y) / role.h == 0 && x > m[0].x && x < m[1].x)
+				if ((y - m[1].y) / role.h == 0 && x > m[0].x && x < m[1].x)	//判断主角是否碰到怪物
 					return 1;
 			}
 		}
@@ -1151,7 +1151,7 @@ int game::is_l_touch(int id)
 				{
 					if (map[i].id != 0 && map[i].id < 4)
 					{
-						POINT m[2];
+						POINT m[2];	//确定两个怪物碰到墙壁的点
 
 						m[0].x = map[i].x;
 						m[0].y = map[i].y;
@@ -1161,7 +1161,7 @@ int game::is_l_touch(int id)
 
 						if (map[i].id == 3)
 						{
-							if (((y - m[1].y) / role.h == 0 || (y - m[1].y - role.h) / role.h == 0) && x > m[1].x && x < m[1].x + role.w)
+							if (((y - m[1].y) / role.h == 0 || (y - m[1].y - role.h) / role.h == 0) && x > m[1].x && x < m[1].x + role.w)	//如果怪物碰到确定的两个点，那怪物的运动方向就改变
 								return 1;
 						}
 						else
@@ -1176,11 +1176,11 @@ int game::is_l_touch(int id)
 		return 0;
 	}
 }
-int game::is_r_touch(int id)
+int game::is_r_touch(int id)	//主角、怪物的右边判定
 {
 	int x, y;
 	int i;
-	if (id == 1)
+	if (id == 1)	//判断主角是否碰到墙壁右边（和判断左边类似）
 	{
 		x = -xmap + role.x + role.w;
 		y = role.y;
@@ -1273,13 +1273,13 @@ int game::is_r_touch(int id)
 		return 0;
 	}
 }
-int game::is_t_touch()
+int game::is_t_touch()	//主角的顶部判定
 {
 	int x, y;
 	x = -xmap + role.x;
 	y = role.y;
 
-	for (int i = 0; i < 350; i++)
+	for (int i = 0; i < 350; i++)	//遍历地图上的所有方块，判断主角是否碰到方块的下面
 	{
 		if (map[i].id != 0 && map[i].id < 4)
 		{
