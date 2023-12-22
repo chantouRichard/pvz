@@ -1,7 +1,7 @@
 #include <graphics.h>
 #include <conio.h>
 #include <math.h>
-#include "MyTimer.h"				// 一个保证精确延时的类。下载于 easyx 官网
+#include "MyTimer.h"			// 一个保证精确延时的类。下载于 easyx 官网
 #include<iostream>
 using namespace std;
 #pragma comment(lib, "Winmm.lib")	// 给游戏添加音乐要用到它
@@ -46,9 +46,9 @@ struct MAP			// 储存地图的结构体
 };
 struct BULLET		// 子弹的结构体
 {
-	int x;			//位置坐标
+	int x;		//位置坐标
 	int y;
-	int turn;		//射击方向
+	int turn;	//射击方向
 	int iframe;
 	int id;
 };
@@ -63,6 +63,8 @@ struct ENEMY		// 敌人的结构体
 	int id;
 	int x;
 	int y;
+	int w=32;
+	int h=32;
 	int turn;
 	int iframe;
 };
@@ -81,8 +83,8 @@ private:
 	double h;				// 精灵跳跃的高度
 	double t;				// 精灵跳跃的时间
 	int ibullet;			// 第几颗子弹
-	int xbullet;			// 子弹的x坐标
-	int ybullet;			// 子弹的y坐标
+	int xbullet;			// 武器的x坐标
+	int ybullet;			// 武器的y坐标
 	int get_bullet;			// 是否获得武器，0表示没有获得，1表示已获得
 	POINT icoint;			// 储存硬币的坐标
 	POINT bomb[20];			// 储存哪些地方爆炸了的坐标
@@ -100,26 +102,26 @@ public:
 	void move();			// 控制主角移动
 	void show();			// 显示画面
 	int isdie();			// 判断主角是否已死
-	int  GetCommand();		// 获取控制命令。参阅easyx
+	int  GetCommand();		// 获取键盘指令
 	void left();			// 主角向左运动
 	void right();			// 主角向右运动
-	void up();				// 主角跳跃
+	void up();			// 主角跳跃
 	void init_shoot();		// 初始化发射子弹
 	void fall();			// 主角自由落体或者向上跳跃
-	int is_l_touch(int id);	// 主角的左边是否碰到墙或敌人，以及敌人是否碰到陆地的左边界
-	int is_r_touch(int id);	// 主角的右边是否碰到墙或敌人，以及敌人是否碰到陆地的右边界
+	int is_l_touch(int id);		// 主角的左边是否碰到墙或敌人，以及敌人是否碰到陆地的左边界
+	int is_r_touch(int id);		// 主角的右边是否碰到墙或敌人，以及敌人是否碰到陆地的右边界
 	int is_t_touch();		// 主角的头是否碰到墙
-	int is_b_touch(int id);	// 主角是否踩到敌人。
+	int is_b_touch(int id);		// 主角是否踩到敌人。
 	int is_touch();			// 主角是否吃到金币
 	int is_land(ENEMY e);	// 敌人是否站在陆地上
-	void getbullet();		// 获取子弹
+	void getbullet();		// 获取武器
 	void shoot();			// 发射子弹
 	int eat(BULLET b);		// 子弹是否打到敌人或者墙壁
-	void end();				// 处理游戏结束
+	void end();			// 处理游戏结束
 };
 game::game()
 {
-	initgraph(XSIZE, YSIZE,EX_SHOWCONSOLE);
+	initgraph(XSIZE, YSIZE, EX_SHOWCONSOLE);
 }
 game::~game()
 {
@@ -135,15 +137,17 @@ void game::start()
 		fillpolygon(points, 4);
 		setbkmode(TRANSPARENT);
 		settextstyle(20, 0, "黑体");
+
 		//RECT是存储矩形左上与右下顶点的结构体的别名
 		//文字均为水平竖直居中，写在同一行里
 		//回到游戏框
-		RECT r2 = { XSIZE / 2 - 45,YSIZE / 3,XSIZE / 2 + 45,YSIZE / 3 + 30 }; 
+
+		RECT r2 = { XSIZE / 2 - 45,YSIZE / 3,XSIZE / 2 + 45,YSIZE / 3 + 30 };
 		rectangle(XSIZE / 2 - 45, YSIZE / 3, XSIZE / 2 + 45, YSIZE / 3 + 30);
 		drawtext("回到游戏", &r2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 		//重新开始框
-		RECT r3 = { XSIZE / 2 - 45,YSIZE / 3 + 30,XSIZE / 2 + 45,YSIZE / 3 + 60 }; 
+		RECT r3 = { XSIZE / 2 - 45,YSIZE / 3 + 30,XSIZE / 2 + 45,YSIZE / 3 + 60 };
 		rectangle(XSIZE / 2 - 45, YSIZE / 3 + 30, XSIZE / 2 + 45, YSIZE / 3 + 60);
 		drawtext("重新开始", &r3, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
@@ -203,7 +207,7 @@ void game::start()
 						POINT points[4] = { {r.left,r.top}, {r.right,r.top}, {r.right,r.bottom}, {r.left,r.bottom} };
 						setfillcolor(RED);
 						fillpolygon(points, 4);
-						setbkmode(TRANSPARENT);			
+						setbkmode(TRANSPARENT);
 						//避免遮住字体
 						switch (i)
 						{
@@ -267,10 +271,10 @@ void game::start()
 	RECT r3 = { XSIZE / 2 - 45,YSIZE / 3 + 30,XSIZE / 2 + 45,YSIZE / 3 + 60 };
 	rectangle(XSIZE / 2 - 45, YSIZE / 3 + 30, XSIZE / 2 + 45, YSIZE / 3 + 60);
 	drawtext("游戏介绍", &r3, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-	RECT r4 = { XSIZE / 2 - 45,YSIZE / 3 + 60,XSIZE / 2 + 45,YSIZE / 3 + 90 }; 
+	RECT r4 = { XSIZE / 2 - 45,YSIZE / 3 + 60,XSIZE / 2 + 45,YSIZE / 3 + 90 };
 	rectangle(XSIZE / 2 - 45, YSIZE / 3 + 60, XSIZE / 2 + 45, YSIZE / 3 + 90);
 	drawtext("操作说明", &r4, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-	RECT r5 = { XSIZE / 2 - 45,YSIZE / 3 + 90,XSIZE / 2 + 45,YSIZE / 3 + 120 }; 
+	RECT r5 = { XSIZE / 2 - 45,YSIZE / 3 + 90,XSIZE / 2 + 45,YSIZE / 3 + 120 };
 	rectangle(XSIZE / 2 - 45, YSIZE / 3 + 90, XSIZE / 2 + 45, YSIZE / 3 + 120);
 	drawtext("退出游戏", &r5, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
@@ -461,7 +465,7 @@ void game::init()
 	icoint.x = -1;							//硬币坐标
 	icoint.y = -1;
 	score_frame = 0;						//分数画面帧
-	bomb_frame = 1;							
+	bomb_frame = 1;
 	mapbk_frame = 1;
 	temp.x = -1;							//临时坐标，存储哪些地方爆炸了的坐标
 	temp.y = -1;
@@ -581,7 +585,7 @@ void game::init()
 
 	map[349].id = 6, map[349].x = 97 * role.w, map[349].y = 7 * role.h;
 
-	for (int i = 64; i < 300; i += 100)//这个for循环用来把有水流的地方的砖块去掉，方便给水流空出位置
+	for (int i = 64; i < 300; i += 100)							//这个for循环用来把有水流的地方的砖块去掉，方便给水流空出位置
 	{
 		map[i].id = 0; map[i].x = -1; map[i].y = -1;
 		map[i + 1].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
@@ -595,11 +599,13 @@ void game::init()
 		map[i + 12].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 		map[i + 13].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 	}
-	map[64].id = 4, map[64].x = 64 * role.w, map[64].y = 10 * role.h;//放置水流图片
+	//放置水流图片
+	map[64].id = 4, map[64].x = 64 * role.w, map[64].y = 10 * role.h;			
 	map[71].id = 4, map[71].x = 71 * role.w, map[71].y = 10 * role.h;
 	map[75].id = 4, map[75].x = 75 * role.w, map[75].y = 10 * role.h;
-
-	enemy[0].id = 1; enemy[0].x = 6 * role.w; enemy[0].y = 8 * role.h; enemy[0].turn = 1; enemy[0].iframe = 1;//一共设置12个敌人
+	//一共设置12个敌人
+	//同时初始化他们的位置和运动方向
+	enemy[0].id = 1; enemy[0].x = 6 * role.w; enemy[0].y = 8 * role.h; enemy[0].turn = 1; enemy[0].iframe = 1;
 	enemy[1].id = 1; enemy[1].x = 8 * role.w; enemy[1].y = 8 * role.h; enemy[1].turn = 1; enemy[1].iframe = 1;
 	enemy[2].id = 1; enemy[2].x = 27 * role.w; enemy[2].y = 8 * role.h; enemy[2].turn = 1; enemy[2].iframe = 1;
 	enemy[3].id = 1; enemy[3].x = 29 * role.w; enemy[3].y = 8 * role.h; enemy[3].turn = 1; enemy[3].iframe = 1;
@@ -610,9 +616,11 @@ void game::init()
 	enemy[8].id = 1; enemy[8].x = 82 * role.w; enemy[8].y = 8 * role.h; enemy[8].turn = 1; enemy[8].iframe = 1;
 	enemy[9].id = 1; enemy[9].x = 65 * role.w; enemy[9].y = 2 * role.h; enemy[9].turn = 1; enemy[9].iframe = 1;
 	enemy[10].id = 1; enemy[10].x = 69 * role.w; enemy[10].y = 2 * role.h; enemy[10].turn = 1; enemy[10].iframe = 1;
-	enemy[11].id = 1; enemy[11].x = 85 * role.w; enemy[11].y = 8 * role.h; enemy[11].turn = 1; enemy[11].iframe = 1;//同时初始化他们的位置和运动方向
+	enemy[11].id = 1; enemy[11].x = 85 * role.w; enemy[11].y = 8 * role.h; enemy[11].turn = 1; enemy[11].iframe = 1;
 
-	for (int i = 0; i < 4; i++)//设置关卡刚刚开始的12个金币的位置
+
+	//设置关卡刚刚开始的12个金币的位置
+	for (int i = 0; i < 4; i++)
 	{
 		coint[i].x = (10 + i) * role.w;
 		coint[i].y = 5 * role.h;
@@ -623,7 +631,8 @@ void game::init()
 		coint[i + 8].x = 74 * role.w;
 		coint[i + 8].y = (4 + i) * role.w;
 	}
-	for (int i = 12; i < 18; i++)//设置最后快结束的时候的12个金币的位置
+	//设置最后快结束的时候的12个金币的位置
+	for (int i = 12; i < 18; i++)
 	{
 		coint[i].x = (83 - 12 + i) * role.w;
 		coint[i].y = 6 * role.h;
@@ -649,19 +658,19 @@ void game::move()
 		{
 			c = GetCommand();		//c是通过按位或来进行复制的，这样可以使c保留多个信息
 			if (c & CMD_LEFT)	//左
-				left();		
+				left();
 			if (c & CMD_RIGHT)	//有
 				right();
 			if ((c & CMD_UP) && role.jump == 0)		//跳跃
 				up();
-//按esc键退出或暂停游戏
+			//按esc键退出或暂停游戏
 			if (c & CMD_ESC)		//暂停
 			{
 				pause = 1;
 				break;
 			}
 			if (c & CMD_SHOOT && get_bullet == 1)		//已获得武器并射击
-//发射子弹的按键控制
+				//发射子弹的按键控制
 			{
 				if (n == 0)
 				{
@@ -670,7 +679,7 @@ void game::move()
 				}
 				n++;
 				if (k % 10 == 0 && n > 10)				//控制子弹的冷却速度
-//k%10用来给子弹设置冷却时间
+					//k%10用来给子弹设置冷却时间
 				{
 					init_shoot();
 				}
@@ -679,7 +688,7 @@ void game::move()
 				n = 0;
 		}
 		if (-xmap + role.x == 97 * role.w)				//走到win
-//判断主角是否到达终点
+			//判断主角是否到达终点
 		{
 			mciSendString("stop mymusic1", NULL, 0, NULL);//到达终点之后播放胜利音乐
 			mciSendString("play mymusic9", NULL, 0, NULL);
@@ -692,11 +701,12 @@ void game::move()
 			if (role.x - STEP > XSIZE)
 				break;
 		}
+		//没踩到方块上
 		if (is_b_touch(1) == 0)
 			role.jump = 1;
 		if (role.jump == 1)
 			fall();
-		if (isdie() == 1)//判断主角是否死亡，生命值减一
+		if (isdie() == 1)//判断主角是否因为跳出地图导致死亡，生命值减一
 		{
 			mciSendString("stop mymusic1", NULL, 0, NULL);//播放死亡音乐
 			mciSendString("play mymusic11", NULL, 0, NULL);
@@ -730,10 +740,10 @@ void game::move()
 		}
 		int boom = 0;
 		if (is_b_touch(2) == 1)			// 如果主角“踩到”敌人
-			boom = 1;//boom=1可以触发爆炸动画
-		getbullet();					// 获取子弹
+			boom = 1;					//boom=1可以触发爆炸动画
+		getbullet();					// 判断获取武器
 		if (get_bullet == 1)
-			shoot();
+			shoot();					//发射子弹
 
 		BeginBatchDraw();
 		show();
@@ -765,7 +775,7 @@ void game::show()
 		switch ((int)score_frame)
 		{
 		case 1:
-			putimage(xmap + icoint.x, icoint.y, role.w, role.h, &img_ani, 0, 11 * role.h,SRCAND);
+			putimage(xmap + icoint.x, icoint.y, role.w, role.h, &img_ani, 0, 11 * role.h, SRCAND);
 			putimage(xmap + icoint.x, icoint.y, role.w, role.h, &img_ani, 0, 10 * role.h, SRCPAINT);
 			break;
 		case 2:
@@ -862,7 +872,7 @@ void game::show()
 		{
 			if (coint[i].x != -1 || coint[i].y != -1)
 			{
-				switch ((int)coint[i].iframe)//加载金币旋转的动画帧
+				switch (int(coint[i].iframe))//加载金币旋转的动画帧
 				{
 				case 1:
 					putimage(xmap + coint[i].x, coint[i].y, role.w, role.h, &img_ani, 0, 9 * role.h, SRCAND);
@@ -889,6 +899,7 @@ void game::show()
 			}
 		}
 	}
+	//如果武器还没有被拾取
 	if (get_bullet == 0)
 	{
 
@@ -980,7 +991,7 @@ void game::show()
 	settextstyle(20, 0, "宋体");
 	drawtext(s1, &r1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 	drawtext(s2, &r2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-	if (role.iframe == 1)					// 显示主角第几帧的图片和主角的方向
+	if (role.iframe == 1)					// 显示主角第几帧的图片和主角的方向(主角一共两帧)
 	{
 		if (role.turn == 1)
 		{
@@ -1038,9 +1049,10 @@ void game::left()
 	role.iframe *= -1;		//改变方向和图片
 	role.turn = -1;
 	role.x -= STEP;
-
+	//如果碰到左边的墙壁
 	if (is_l_touch(1) == 1)
 		role.x += STEP;
+	//如果运动到画面的最左边
 	if (role.x < role.xleft)
 		role.x += STEP;
 }
@@ -1089,7 +1101,7 @@ int game::is_l_touch(int id)
 	{
 		x = -xmap + role.x;
 		y = role.y;
-		for (i = 0; i < 350; i++)
+		for (i = 0; i < 350; i++)			//遍历整张地图，判断有没有碰到地图
 		{
 			if (map[i].id != 0 && map[i].id < 4)
 			{
@@ -1103,6 +1115,7 @@ int game::is_l_touch(int id)
 
 				if (map[i].id == 3)
 				{
+					//y坐标是否位于上下边界之间，x坐标在方块右边的第一个单位中
 					if (((y - m[1].y) / role.h == 0 || (y - m[1].y - role.h) / role.h == 0) && x > m[1].x && x < m[1].x + role.w)
 						return 1;
 				}
@@ -1151,7 +1164,7 @@ int game::is_l_touch(int id)
 				{
 					if (map[i].id != 0 && map[i].id < 4)
 					{
-						POINT m[2];	//确定两个怪物碰到墙壁的点
+						POINT m[2];	//确定怪物碰到墙壁上界与下界的点
 
 						m[0].x = map[i].x;
 						m[0].y = map[i].y;
@@ -1273,7 +1286,7 @@ int game::is_r_touch(int id)	//主角、怪物的右边判定
 		return 0;
 	}
 }
-int game::is_t_touch()	//主角的顶部判定
+int game::is_t_touch()	//是否顶到方块下部判断
 {
 	int x, y;
 	x = -xmap + role.x;
@@ -1297,9 +1310,9 @@ int game::is_t_touch()	//主角的顶部判定
 	}
 	return 0;
 }
-int game::is_b_touch(int id)				//是否踩到敌人
+int game::is_b_touch(int id)				//是否踩到敌人以及是否踩在方块上
 {
-	if (id == 1)
+	if (id == 1)					//判断是否踩在方块上
 	{
 		int x, y;
 		x = -xmap + role.x;
@@ -1309,7 +1322,7 @@ int game::is_b_touch(int id)				//是否踩到敌人
 		{
 			if (map[i].id != 0 && map[i].id < 4)
 			{
-				POINT m[2];
+				POINT m[2];		//存储方块上平面的左右坐标
 
 				m[0].x = map[i].x;
 				m[0].y = map[i].y;
@@ -1317,12 +1330,12 @@ int game::is_b_touch(int id)				//是否踩到敌人
 				m[1].x = map[i].x;
 				m[1].y = map[i].y + role.h;
 
-				if (map[i].id == 3)
+				if (map[i].id == 3)	//踩在水管上
 				{
 					if (((x - m[0].x) / role.w == 0 || (x + role.w - m[0].x - 2 * role.w) / role.w == 0) && y >= m[0].y && y < m[1].y)
 						return 1;
 				}
-				else
+				else			//踩在普通方块上
 				{
 					if ((x - m[0].x) / role.w == 0 && y >= m[0].y && y < m[1].y)
 						return 1;
@@ -1331,7 +1344,7 @@ int game::is_b_touch(int id)				//是否踩到敌人
 		}
 		return 0;
 	}
-	else if (id == 2)
+	else if (id == 2)				//踩敌人
 	{
 		int x, y;
 		x = -xmap + role.x;
@@ -1353,13 +1366,15 @@ int game::is_b_touch(int id)				//是否踩到敌人
 				{
 					mciSendString("play mymusic7 from 0", NULL, 0, NULL);
 					score += 10;
+					//踩到敌人就会爆炸
 					bomb[i].x = enemy[i].x;
 					bomb[i].y = enemy[i].y;
+					//敌人清空
 					enemy[i].id = 0;
-					enemy[i].iframe = -1;
+					/*enemy[i].iframe = -1;
 					enemy[i].turn = 1;
 					enemy[i].x = -1;
-					enemy[i].y = -1;
+					enemy[i].y = -1;*/
 					return 1;
 				}
 			}
@@ -1368,10 +1383,10 @@ int game::is_b_touch(int id)				//是否踩到敌人
 	}
 	return 0;
 }
-int game::is_touch()
+int game::is_touch()		//有没有捡到金币
 {
 	int i, j;
-	POINT r[2];
+	POINT r[2];	//存储角色位置
 	r[0].x = -xmap + role.x;
 	r[0].y = role.y;
 	r[1].x = -xmap + role.x + role.w;
@@ -1380,7 +1395,7 @@ int game::is_touch()
 	{
 		if (coint[i].x != -1 || coint[i].y != -1)
 		{
-			POINT c[4];
+			POINT c[4];	//存储金币位置四个角的坐标
 
 			c[0].x = coint[i].x;
 			c[0].y = coint[i].y;
@@ -1396,10 +1411,12 @@ int game::is_touch()
 
 			for (j = 0; j < 4; j++)
 			{
+				//判断是否碰到金币
 				if (c[j].x >= r[0].x && c[j].y >= r[0].y && c[j].x <= r[1].x && c[j].y <= r[1].y)
 				{
 					mciSendString("play mymusic3 from 0", NULL, 0, NULL);
 					score += 20;
+					//icoint是存储coint坐标的
 					icoint.x = coint[i].x;
 					icoint.y = coint[i].y;
 
@@ -1416,18 +1433,18 @@ int game::is_touch()
 }
 int game::is_land(ENEMY e)
 {
-	POINT r[2];
+	POINT r[2];		//存储敌人的左下和右下坐标
 	r[0].x = e.x;
-	r[0].y = e.y + role.h;
+	r[0].y = e.y + e.h;
 
-	r[1].x = e.x + role.h;
-	r[1].y = e.y + role.h;
+	r[1].x = e.x + e.w;
+	r[1].y = e.y + e.h;
 
 	for (int i = 0; i < 350; i++)
 	{
 		if (map[i].id != 0 && map[i].id < 4)
 		{
-			POINT m[3];
+			POINT m[3];		//存储地图中砖块低处与高处的坐标
 
 			m[0].x = map[i].x;
 			m[0].y = map[i].y;
@@ -1488,7 +1505,7 @@ void game::getbullet()
 void game::fall()
 {
 
-	h = v0 * t + G * pow(t, 2) / 2;			
+	h = v0 * t + G * pow(t, 2) / 2;	//物理公式
 
 	role.y += (int)(h + 0.5);
 	if (v0 >= 0)		// 自由落体
@@ -1523,17 +1540,18 @@ void game::shoot()
 	int i;
 	for (i = 0; i < 20; i++)
 	{
-		if (bullet[i].id == 1)
+		if (bullet[i].id == 1)		//如果子弹已经射出
 		{
 
 			if (bullet[i].turn == 1)
 			{
-				bullet[i].x += 2 * STEP;
+				bullet[i].x += 2 * STEP;	//子弹速度比人快
 			}
 			else
 			{
 				bullet[i].x -= 2 * STEP;
 			}
+			//子弹打出画面的左右边界就消失
 			if ((bullet[i].x < (-3 * role.w)) || (bullet[i].x > XSIZE))
 			{
 				bullet[i].id = 0;
@@ -1542,6 +1560,7 @@ void game::shoot()
 				bullet[i].iframe = 1;
 				bullet[i].turn = 1;
 			}
+			//子弹打到敌人或是墙壁
 			if (eat(bullet[i]) == 1)
 			{
 				bullet[i].id = 0;
@@ -1561,6 +1580,7 @@ void game::shoot()
 int game::eat(BULLET b)
 {
 	POINT r[4];
+	//子弹的四个角的坐标
 	r[0].x = -xmap + b.x + role.w / 2;
 	r[0].y = b.y;
 	r[1].x = -xmap + b.x + role.w;
@@ -1573,14 +1593,14 @@ int game::eat(BULLET b)
 	int i;
 	for (i = 0; i < 350; i++)
 	{
-		if (map[i].id != 0 && map[i].id < 4)
+		if (map[i].id != 0 && map[i].id < 4)			//碰到实体方块
 		{
 			POINT m[2];
 
 			m[0].x = map[i].x;
 			m[0].y = map[i].y;
 
-			if (map[i].id == 3)
+			if (map[i].id == 3)							//碰到水管
 			{
 				m[1].x = map[i].x + 2 * role.w;
 				m[1].y = map[i].y + 2 * role.h;
@@ -1602,7 +1622,7 @@ int game::eat(BULLET b)
 				}
 			}
 		}
-		if (i < 20)
+		if (i < 20)			//敌人上线个数是20
 		{
 			if (enemy[i].id == 1)
 			{
@@ -1611,8 +1631,8 @@ int game::eat(BULLET b)
 				e[0].x = enemy[i].x;
 				e[0].y = enemy[i].y;
 
-				e[1].x = enemy[i].x + role.w;
-				e[1].y = enemy[i].y + role.h;
+				e[1].x = enemy[i].x + enemy[i].w;
+				e[1].y = enemy[i].y + enemy[i].h;
 
 				for (int j = 0; j < 4; j++)
 				{
