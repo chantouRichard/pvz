@@ -310,9 +310,12 @@ void game::start()
 	{
 		BeginBatchDraw();
 		m = getmessage(EM_MOUSE);
-		if (m.x > XSIZE - 46 && m.x<XSIZE - 3 && m.y>YSIZE - 26 && m.y < YSIZE - 3)
+		static bool flag = true;
+		if (m.x > XSIZE - 46 && m.x<XSIZE - 3 && m.y>YSIZE - 26 && m.y < YSIZE - 3&& flag)
 		{
 			cout << "恭喜你发现彩蛋";
+			score += 100;
+			flag = false;
 		}
 		switch (m.message)
 		{
@@ -735,6 +738,203 @@ void game::init_1()
 void game::inti_2()
 {
 	//代编辑
+	if (pause == 1)
+		return;
+	role.id = 1;
+	role.x = X;								//设置人物起始横坐标
+	role.y = Y;								//设置人物起始纵坐标
+	role.w = W;								//人物宽
+	role.h = H;								//人物高
+	role.xleft = 0;							//水平运动左界限
+	role.xright = role.w * 6 + STEP;		//水平运动右界限
+	role.iframe = 1;						//当前加载到第几副图片
+	role.turn = 1;							//运动方向
+	role.jump = 0;							//是否跳跃
+
+	xmapsky = 0;							//背景天空的起始横坐标
+	xmap = 0;								//地图的起始坐标
+	v0 = 0;									//跳跃初速度
+	h = 0;									//跳跃高度
+	t = 0;									//跳跃时间
+	ibullet = -1;							//第几颗子弹
+	icoint.x = -1;							//硬币坐标
+	icoint.y = -1;
+	score_frame = 0;						//分数画面帧
+	bomb_frame = 1;
+	mapbk_frame = 1;
+	temp.x = -1;							//临时坐标，存储哪些地方爆炸了的坐标
+	temp.y = -1;
+	xbullet = 41 * role.w - 10;				//子弹坐标
+	ybullet = 4 * role.h - 25;
+	get_bullet = 0;							//是否获得武器，0是没有获得，1是获得
+	win = 0;								//是否通关
+	pause = 0;								//是否按暂停
+	score = 0;								//当前分数
+
+	for (int i = 0; i < 350; i++)
+	{
+		//地图
+		map[i].id = 0;
+		map[i].x = -1;
+		map[i].y = -1;
+		if (i < 50)
+		{
+			//硬币
+			coint[i].x = -1;
+			coint[i].y = -1;
+			coint[i].iframe = 1;
+		}
+		if (i < 20)
+		{
+			//子弹
+			bullet[i].id = 0;
+			bullet[i].x = -1;
+			bullet[i].y = -1;
+			bullet[i].iframe = 1;
+			bullet[i].turn = -1;
+			//敌人
+			enemy[i].id = 0;
+			enemy[i].x = -1;
+			enemy[i].y = -1;
+			enemy[i].turn = 1;
+			enemy[i].iframe = 1;
+			//爆炸
+			bomb[i].x = -1;
+			bomb[i].y = -1;
+		}
+	}
+	loadimage(&img_mapsky, "res\\mapsky.jpg", XSIZE, YSIZE * 4);		//背景天空图片
+	loadimage(&img_p, "res\\role.gif");									//人物图片
+	loadimage(&img_map, "res\\map.gif");								//背景图
+	loadimage(&img_ani, "res\\ani.gif");								//动画图
+	loadimage(&img_mapbk, "res\\mapbk.gif");							//背景图
+	loadimage(&img_home, "res\\home.jpg", XSIZE, YSIZE * 5);			//通关
+	//为音乐取别名
+	mciSendString("open res\\背景音乐.mp3 alias mymusic1", NULL, 0, NULL);
+	mciSendString("open res\\子弹.mp3 alias mymusic2", NULL, 0, NULL);
+	mciSendString("open res\\金币.mp3 alias mymusic3", NULL, 0, NULL);
+	mciSendString("open res\\跳.mp3 alias mymusic4", NULL, 0, NULL);
+	mciSendString("open res\\子弹打到敌人.mp3 alias mymusic5", NULL, 0, NULL);
+	mciSendString("open res\\子弹撞墙.mp3 alias mymusic6", NULL, 0, NULL);
+	mciSendString("open res\\踩敌人.mp3 alias mymusic7", NULL, 0, NULL);
+	mciSendString("open res\\吃到武器.mp3 alias mymusic8", NULL, 0, NULL);
+	mciSendString("open res\\胜利.mp3 alias mymusic9", NULL, 0, NULL);
+	mciSendString("open res\\死亡1.mp3 alias mymusic10", NULL, 0, NULL);
+	mciSendString("open res\\死亡2.mp3 alias mymusic11", NULL, 0, NULL);
+
+	for (int i = 0; i < 300; i++)					// 以下都是编辑地图
+	{
+		map[i].id = 1;//将所有方块都先定义为普通砖块
+		map[i].x = i % 100 * role.w;//for循环中的300表示地图主角脚下的三层方块，每一层有100个方块
+		if (i < 100)//第一层方块的y坐标
+			map[i].y = 9 * role.h;
+		else if (i >= 100 && i < 200)//第二层的纵坐标
+			map[i].y = 10 * role.h;
+		else//第三层的纵坐标
+			map[i].y = 11 * role.h;
+	}
+	map[15].id = 1, map[15].x = 18 * role.w, map[15].y = 8 * role.h;//地图砖块变高一层
+	map[115].id = 1, map[115].x = 19 * role.w, map[115].y = 8 * role.h;
+	map[215].id = 1, map[215].x = 20 * role.w, map[215].y = 8 * role.h;
+
+	map[16].id = 1, map[16].x = 21 * role.w, map[16].y = 8 * role.h;
+	map[116].id = 1, map[116].x = 22 * role.w, map[116].y = 8 * role.h;
+	map[216].id = 1, map[216].x = 23 * role.w, map[216].y = 8 * role.h;
+
+	map[17].id = 1, map[17].x = 24 * role.w, map[17].y = 8 * role.h;
+	map[117].id = 1, map[117].x = 25 * role.w, map[117].y = 8 * role.h;
+	map[217].id = 1, map[217].x = 26 * role.w, map[217].y = 8 * role.h;//将上面9个方块设置高一层
+
+	map[300].id = 2, map[300].x = 10 * role.w, map[300].y = 6 * role.h;//id=2代表使用白色的放置金币的方块
+	map[301].id = 2, map[301].x = 11 * role.w, map[301].y = 6 * role.h;
+	map[302].id = 2, map[302].x = 12 * role.w, map[302].y = 6 * role.h;
+
+	map[303].id = 3, map[303].x = 36 * role.w, map[303].y = 7 * role.h;//放置水管图片
+	map[304].id = 3, map[304].x = 44 * role.w, map[304].y = 7 * role.h;
+
+	map[305].id = 2, map[305].x = 40 * role.w, map[305].y = 4 * role.h;
+	map[306].id = 2, map[306].x = 41 * role.w, map[306].y = 4 * role.h;
+	map[307].id = 2, map[307].x = 42 * role.w, map[307].y = 4 * role.h;
+
+	map[308].id = 2, map[308].x = 13 * role.w, map[308].y = 6 * role.h;
+
+	map[309].id = 4, map[309].x = 15 * role.w, map[309].y = 10 * role.h;
+
+	map[310].id = 5, map[310].x = 19 * role.w, map[310].y = 6 * role.h;
+	map[311].id = 5, map[311].x = 23 * role.w, map[311].y = 6 * role.h;
+	map[312].id = 5, map[312].x = 32 * role.w, map[312].y = 7 * role.h;
+	map[313].id = 5, map[313].x = 48 * role.w, map[313].y = 7 * role.h;
+	map[314].id = 5, map[314].x = 52 * role.w, map[314].y = 7 * role.h;
+	map[315].id = 5, map[315].x = 56 * role.w, map[315].y = 7 * role.h;
+
+	map[316].id = 3, map[316].x = 80 * role.w, map[316].y = 7 * role.h;
+	map[317].id = 3, map[317].x = 90 * role.w, map[317].y = 7 * role.h;
+
+	map[318].id = 2, map[318].x = 62 * role.w, map[318].y = 6 * role.h;
+
+	map[319].id = 2, map[319].x = 65 * role.w, map[319].y = 3 * role.h;
+	map[320].id = 2, map[320].x = 66 * role.w, map[320].y = 3 * role.h;
+	map[321].id = 2, map[321].x = 67 * role.w, map[321].y = 3 * role.h;
+	map[322].id = 2, map[322].x = 68 * role.w, map[322].y = 3 * role.h;
+	map[323].id = 2, map[323].x = 69 * role.w, map[323].y = 3 * role.h;
+
+	map[349].id = 6, map[349].x = 97 * role.w, map[349].y = 7 * role.h;
+
+	for (int i = 64; i < 300; i += 100)							//这个for循环用来把有水流的地方的砖块去掉，方便给水流空出位置
+	{
+		map[i].id = 0; map[i].x = -1; map[i].y = -1;
+		map[i + 1].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
+		map[i + 2].id = 0; map[i + 2].x = -1; map[i + 2].y = -1;
+
+		map[i + 7].id = 0; map[i].x = -1; map[i].y = -1;
+		map[i + 8].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
+		map[i + 9].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
+
+		map[i + 11].id = 0; map[i].x = -1; map[i].y = -1;
+		map[i + 12].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
+		map[i + 13].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
+	}
+	//放置水流图片
+	map[64].id = 4, map[64].x = 64 * role.w, map[64].y = 10 * role.h;
+	map[71].id = 4, map[71].x = 71 * role.w, map[71].y = 10 * role.h;
+	map[75].id = 4, map[75].x = 75 * role.w, map[75].y = 10 * role.h;
+	//一共设置12个敌人
+	//同时初始化他们的位置和运动方向
+	enemy[0].id = 1; enemy[0].x = 6 * role.w; enemy[0].y = 8 * role.h; enemy[0].turn = 1; enemy[0].iframe = 1;
+	enemy[1].id = 1; enemy[1].x = 8 * role.w; enemy[1].y = 8 * role.h; enemy[1].turn = 1; enemy[1].iframe = 1;
+	enemy[2].id = 1; enemy[2].x = 27 * role.w; enemy[2].y = 8 * role.h; enemy[2].turn = 1; enemy[2].iframe = 1;
+	enemy[3].id = 1; enemy[3].x = 29 * role.w; enemy[3].y = 8 * role.h; enemy[3].turn = 1; enemy[3].iframe = 1;
+	enemy[4].id = 1; enemy[4].x = 31 * role.w; enemy[4].y = 8 * role.h; enemy[4].turn = 1; enemy[4].iframe = 1;
+	enemy[5].id = 1; enemy[5].x = 33 * role.w; enemy[5].y = 8 * role.h; enemy[5].turn = 1; enemy[5].iframe = 1;
+	enemy[6].id = 1; enemy[6].x = 35 * role.w; enemy[6].y = 8 * role.h; enemy[6].turn = 1; enemy[6].iframe = 1;
+	enemy[7].id = 1; enemy[7].x = 40 * role.w; enemy[7].y = 8 * role.h; enemy[7].turn = 1; enemy[7].iframe = 1;
+	enemy[8].id = 1; enemy[8].x = 82 * role.w; enemy[8].y = 8 * role.h; enemy[8].turn = 1; enemy[8].iframe = 1;
+	enemy[9].id = 1; enemy[9].x = 65 * role.w; enemy[9].y = 2 * role.h; enemy[9].turn = 1; enemy[9].iframe = 1;
+	enemy[10].id = 1; enemy[10].x = 69 * role.w; enemy[10].y = 2 * role.h; enemy[10].turn = 1; enemy[10].iframe = 1;
+	enemy[11].id = 1; enemy[11].x = 85 * role.w; enemy[11].y = 8 * role.h; enemy[11].turn = 1; enemy[11].iframe = 1;
+
+
+	//设置关卡刚刚开始的12个金币的位置
+	for (int i = 0; i < 4; i++)
+	{
+		coint[i].x = (10 + i) * role.w;
+		coint[i].y = 5 * role.h;
+
+		coint[i + 4].x = (67 + i) * role.w;
+		coint[i + 4].y = 8 * role.w;
+
+		coint[i + 8].x = 74 * role.w;
+		coint[i + 8].y = (4 + i) * role.w;
+	}
+	//设置最后快结束的时候的12个金币的位置
+	for (int i = 12; i < 18; i++)
+	{
+		coint[i].x = (83 - 12 + i) * role.w;
+		coint[i].y = 6 * role.h;
+
+		coint[i + 6].x = (83 - 12 + i) * role.w;
+		coint[i + 6].y = 7 * role.w;
+	}
 }
 
 void game::move()
@@ -1773,19 +1973,27 @@ void game::end()
 	mciSendString("close all", NULL, 0, NULL);
 
 	tt.Sleep(500);
-
+	//通过第一关
 	if (win == 1 && pass==1 )
 	{
+		//转到第二关
 		pass++;
 		pause = 0;
 		score = 0;
+		//重置生命为3条
 		life = 3;
 		mciSendString("open res\\通关.mp3 alias mymusic13", NULL, 0, NULL);
 		mciSendString("play mymusic13", NULL, 0, NULL);
-		putimage(0, -3 * YSIZE, &img_home);
-		tt.Sleep(7000);
+		cleardevice();
+		setfillcolor(BLACK);
+		fillrectangle(0, 0, XSIZE, YSIZE);
+		RECT r = { 0, 0, XSIZE, YSIZE };
+		drawtext("恭喜通关", &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+		/*putimage(0, -3 * YSIZE, &img_home);*/
+		tt.Sleep(3000);
 		mciSendString("close mymusic13", NULL, 0, NULL);
 	}
+	//第二关通关
 	else if (win = 1 && pass == 2)
 	{
 		pause = 0;
@@ -1797,9 +2005,11 @@ void game::end()
 		tt.Sleep(7000);
 		mciSendString("close mymusic13", NULL, 0, NULL);
 	}
+	//没有通关
 	else
 	{
 		score = 0;
+		//生命值为0，游戏结束
 		if (life == 0)
 		{
 			mciSendString("open res\\游戏结束.mp3 alias mymusic12", NULL, 0, NULL);
@@ -1808,6 +2018,7 @@ void game::end()
 			tt.Sleep(5500);
 			mciSendString("close mymusic12", NULL, 0, NULL);
 		}
+		//生命值不为0
 		else
 		{
 			cleardevice();
