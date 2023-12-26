@@ -736,8 +736,8 @@ void game::init_1()
 }
 
 void game::inti_2()
+
 {
-	//代编辑
 	if (pause == 1)
 		return;
 	role.id = 1;
@@ -766,10 +766,7 @@ void game::inti_2()
 	temp.y = -1;
 	xbullet = 41 * role.w - 10;				//子弹坐标
 	ybullet = 4 * role.h - 25;
-	get_bullet = 0;							//是否获得武器，0是没有获得，1是获得
-	win = 0;								//是否通关
 	pause = 0;								//是否按暂停
-	score = 0;								//当前分数
 
 	for (int i = 0; i < 350; i++)
 	{
@@ -804,6 +801,7 @@ void game::inti_2()
 		}
 	}
 	loadimage(&img_mapsky, "res\\mapsky.jpg", XSIZE, YSIZE * 4);		//背景天空图片
+	loadimage(&img_mapsky2, "res\\mapsky.jpg", XSIZE, YSIZE * 4);
 	loadimage(&img_p, "res\\role.gif");									//人物图片
 	loadimage(&img_map, "res\\map.gif");								//背景图
 	loadimage(&img_ani, "res\\ani.gif");								//动画图
@@ -833,23 +831,47 @@ void game::inti_2()
 		else//第三层的纵坐标
 			map[i].y = 11 * role.h;
 	}
-	map[15].id = 1, map[15].x = 18 * role.w, map[15].y = 8 * role.h;//地图砖块变高一层
-	map[115].id = 1, map[115].x = 19 * role.w, map[115].y = 8 * role.h;
-	map[215].id = 1, map[215].x = 20 * role.w, map[215].y = 8 * role.h;
+	map[3].id = 1, map[3].x = 18 * role.w, map[3].y = 8 * role.h;//地图砖块变高一层
+	map[103].id = 1, map[103].x = 19 * role.w, map[103].y = 8 * role.h;
+	map[203].id = 1, map[203].x = 20 * role.w, map[203].y = 8 * role.h;
 
-	map[16].id = 1, map[16].x = 21 * role.w, map[16].y = 8 * role.h;
-	map[116].id = 1, map[116].x = 22 * role.w, map[116].y = 8 * role.h;
-	map[216].id = 1, map[216].x = 23 * role.w, map[216].y = 8 * role.h;
+	map[8].id = 1, map[8].x = 21 * role.w, map[8].y = 8 * role.h;
+	map[108].id = 1, map[108].x = 22 * role.w, map[108].y = 8 * role.h;
+	map[208].id = 1, map[208].x = 23 * role.w, map[208].y = 8 * role.h;
 
-	map[17].id = 1, map[17].x = 24 * role.w, map[17].y = 8 * role.h;
-	map[117].id = 1, map[117].x = 25 * role.w, map[117].y = 8 * role.h;
-	map[217].id = 1, map[217].x = 26 * role.w, map[217].y = 8 * role.h;//将上面9个方块设置高一层
+	map[15].id = 1, map[15].x = 21 * role.w, map[15].y = 7 * role.h;
+	map[115].id = 1, map[115].x = 21 * role.w, map[115].y = 6 * role.h;
+	map[215].id = 1, map[215].x = 21 * role.w, map[215].y = 5 * role.h;
+
+	map[16].id = 1, map[16].x = 21 * role.w, map[16].y = 7 * role.h;
+	map[116].id = 1, map[116].x = 21 * role.w, map[116].y = 6 * role.h;
+	map[216].id = 1, map[215].x = 21 * role.w, map[216].y = 5 * role.h;
+
+	map[17].id = 1, map[17].x = 21 * role.w, map[17].y = 7 * role.h;
+	map[117].id = 1, map[117].x = 21 * role.w, map[117].y = 6 * role.h;
+	map[217].id = 1, map[217].x = 21 * role.w, map[217].y = 5 * role.h;
+
+	map[59].id = 1, map[59].x = 22 * role.w, map[59].y = 7 * role.h;
+	map[159].id = 1, map[115].x = 22 * role.w, map[115].y = 6 * role.h;
+	map[259].id = 1, map[215].x = 22 * role.w, map[215].y = 5 * role.h;
+
+	map[60].id = 1, map[60].x = 23 * role.w, map[60].y = 7 * role.h;
+	map[160].id = 1, map[160].x = 23 * role.w, map[160].y = 6 * role.h;
+	map[260].id = 1, map[260].x = 23 * role.w, map[260].y = 5 * role.h;
+
+	map[61].id = 1, map[61].x = 22 * role.w, map[61].y = 4 * role.h;
+	map[161].id = 1, map[161].x = 23 * role.w, map[161].y = 4 * role.h;
+	map[261].id = 1, map[261].x = 23 * role.w, map[261].y = 3 * role.h;
+
+	map[7].id = 1, map[7].x = 24 * role.w, map[7].y = 8 * role.h;
+	map[107].id = 1, map[107].x = 25 * role.w, map[107].y = 8 * role.h;
+	map[207].id = 1, map[207].x = 26 * role.w, map[207].y = 8 * role.h;//将上面9个方块设置高一层
 
 	map[300].id = 2, map[300].x = 10 * role.w, map[300].y = 6 * role.h;//id=2代表使用白色的放置金币的方块
 	map[301].id = 2, map[301].x = 11 * role.w, map[301].y = 6 * role.h;
 	map[302].id = 2, map[302].x = 12 * role.w, map[302].y = 6 * role.h;
 
-	map[303].id = 3, map[303].x = 36 * role.w, map[303].y = 7 * role.h;//放置水管图片
+	map[303].id = 3, map[303].x = 32 * role.w, map[303].y = 7 * role.h;//放置水管图片
 	map[304].id = 3, map[304].x = 44 * role.w, map[304].y = 7 * role.h;
 
 	map[305].id = 2, map[305].x = 40 * role.w, map[305].y = 4 * role.h;
@@ -872,16 +894,21 @@ void game::inti_2()
 
 	map[318].id = 2, map[318].x = 62 * role.w, map[318].y = 6 * role.h;
 
-	map[319].id = 2, map[319].x = 65 * role.w, map[319].y = 3 * role.h;
+	map[319].id = 2, map[319].x = 65 * role.w, map[319].y = 4 * role.h;
 	map[320].id = 2, map[320].x = 66 * role.w, map[320].y = 3 * role.h;
 	map[321].id = 2, map[321].x = 67 * role.w, map[321].y = 3 * role.h;
 	map[322].id = 2, map[322].x = 68 * role.w, map[322].y = 3 * role.h;
-	map[323].id = 2, map[323].x = 69 * role.w, map[323].y = 3 * role.h;
+	map[323].id = 2, map[323].x = 69 * role.w, map[323].y = 4 * role.h;
 
 	map[349].id = 6, map[349].x = 97 * role.w, map[349].y = 7 * role.h;
 
 	for (int i = 64; i < 300; i += 100)							//这个for循环用来把有水流的地方的砖块去掉，方便给水流空出位置
 	{
+		map[i-5].id = 0; map[i - 5].x = -1; map[i - 5].y = -1;
+		map[i -4].id = 0; map[i - 4].x = -1; map[i - 4].y = -1;
+		map[i -3].id = 0; map[i - 3].x = -1; map[i - 3].y = -1;
+
+		map[i-1].id = 0; map[i-1].x = -1; map[i-1].y = -1;
 		map[i].id = 0; map[i].x = -1; map[i].y = -1;
 		map[i + 1].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 		map[i + 2].id = 0; map[i + 2].x = -1; map[i + 2].y = -1;
@@ -894,7 +921,30 @@ void game::inti_2()
 		map[i + 12].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 		map[i + 13].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 	}
+	for (int i = 0; i < 10; i++)
+	{
+		int j=1, k=0;
+		if (i == 4)
+		{
+			j++;
+			k = 2;
+		}
+		if (i == 7)
+		{
+			j++;
+			k = 3;
+		}
+		if (i == 9)
+		{
+			j++;
+			k = 4;
+		}
+		map[i + 70].x = (70 + k) * role.w; map[i + 70].y = (9 - i) * role.h;
+		k++;
+	}
 	//放置水流图片
+	map[59].id = 4, map[59].x = 59 * role.w, map[59].y = 10 * role.h;
+	map[63].id = 4, map[63].x = 63 * role.w, map[63].y = 10 * role.h;
 	map[64].id = 4, map[64].x = 64 * role.w, map[64].y = 10 * role.h;
 	map[71].id = 4, map[71].x = 71 * role.w, map[71].y = 10 * role.h;
 	map[75].id = 4, map[75].x = 75 * role.w, map[75].y = 10 * role.h;
