@@ -104,7 +104,8 @@ public:
 	void move();			// 控制主角移动
 	void show();			// 显示画面
 	int isdie();			// 判断主角是否已死
-	int  GetCommand();		// 获取键盘指令
+	int  GetCommand1();		// 获取键盘指令
+	int  GetCommand2();		// 获取键盘指令
 	void left();			// 主角向左运动
 	void right();			// 主角向右运动
 	void up();			// 主角跳跃
@@ -1002,7 +1003,8 @@ void game::move()
 			k = 0;
 		if (_kbhit() && win == 0)//控制主角的上下左右的移动
 		{
-			c = GetCommand();		//c是通过按位或来进行复制的，这样可以使c保留多个信息
+			if(game::pass==1)c = GetCommand1();		//c是通过按位或来进行复制的，这样可以使c保留多个信息
+			if (game::pass == 2)c = GetCommand2();
 			if (c & CMD_LEFT)	//左
 				left();
 			if (c & CMD_RIGHT)	//有
@@ -1371,7 +1373,7 @@ int game::isdie()
 	else
 		return 0;
 }
-int game::GetCommand()
+int game::GetCommand1()
 {
 	int c = 0;
 	//通过按位与的操作来得到按键信息
@@ -1383,6 +1385,25 @@ int game::GetCommand()
 	if ((GetAsyncKeyState('W') & 0x8000) || (GetAsyncKeyState('K') & 0x8000))
 		c |= CMD_UP;
 	if (GetAsyncKeyState('S') & 0x8000)
+		c |= CMD_DOWN;
+	if (GetAsyncKeyState('J') & 0x8000)
+		c |= CMD_SHOOT;
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+		c |= CMD_ESC;
+	return c;
+}
+int game::GetCommand2()
+{
+	int c = 0;
+	//通过按位与的操作来得到按键信息
+	//通过按位或的复制操作保存多个按键信息
+	if (GetAsyncKeyState('D') & 0x8000)			//如果A被按下GetAsyncKeyState（“A”）会输出16位的二进制，且最高位是1，按位与后是1
+		c |= CMD_LEFT;
+	if (GetAsyncKeyState('A') & 0x8000)
+		c |= CMD_RIGHT;
+	if ((GetAsyncKeyState('S') & 0x8000) || (GetAsyncKeyState('K') & 0x8000))
+		c |= CMD_UP;
+	if (GetAsyncKeyState('W') & 0x8000)
 		c |= CMD_DOWN;
 	if (GetAsyncKeyState('J') & 0x8000)
 		c |= CMD_SHOOT;
