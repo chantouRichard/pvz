@@ -92,7 +92,6 @@ private:
 	double score_frame;		// 下面3个double型的变量用于控制各自图片的帧，以实现动画的效果。如画面中的流水
 	double bomb_frame;
 	double mapbk_frame;
-	int win;				// 玩家是否过关
 	int pause;				// 玩家是否按Esc（暂停键）
 	
 public:
@@ -104,8 +103,7 @@ public:
 	void move();			// 控制主角移动
 	void show();			// 显示画面
 	int isdie();			// 判断主角是否已死
-	int  GetCommand1();		// 获取键盘指令
-	int  GetCommand2();		// 获取键盘指令
+	int  GetCommand();		// 获取键盘指令
 	void left();			// 主角向左运动
 	void right();			// 主角向右运动
 	void up();			// 主角跳跃
@@ -122,6 +120,7 @@ public:
 	int eat(BULLET b);		// 子弹是否打到敌人或者墙壁
 	void end();				// 处理游戏结束
 	static int pass;		//存储当前是第几关
+	static int win;				// 玩家是否过关
 };
 game::game()
 {
@@ -565,8 +564,7 @@ void game::init_1()
 	temp.y = -1;
 	xbullet = 41 * role.w - 10;				//子弹坐标
 	ybullet = 4 * role.h - 25;
-	get_bullet = 0;							//是否获得武器，0是没有获得，1是获得
-	win = 0;								//是否通关
+	get_bullet = 0;							//是否获得武器，0是没有获得，1是获得	
 	pause = 0;								//是否按暂停
 	score = 0;								//当前分数
 
@@ -737,7 +735,6 @@ void game::init_1()
 }
 
 void game::inti_2()
-
 {
 	if (pause == 1)
 		return;
@@ -802,7 +799,7 @@ void game::inti_2()
 		}
 	}
 	loadimage(&img_mapsky, "res\\mapsky.jpg", XSIZE, YSIZE * 4);		//背景天空图片
-	loadimage(&img_mapsky2, "res\\mapsky.jpg", XSIZE, YSIZE * 4);
+	/*loadimage(&img_mapsky2, "res\\mapsky.jpg", XSIZE, YSIZE * 4);*/
 	loadimage(&img_p, "res\\role.gif");									//人物图片
 	loadimage(&img_map, "res\\map.gif");								//背景图
 	loadimage(&img_ani, "res\\ani.gif");								//动画图
@@ -905,11 +902,11 @@ void game::inti_2()
 
 	for (int i = 64; i < 300; i += 100)							//这个for循环用来把有水流的地方的砖块去掉，方便给水流空出位置
 	{
-		map[i-5].id = 0; map[i - 5].x = -1; map[i - 5].y = -1;
-		map[i -4].id = 0; map[i - 4].x = -1; map[i - 4].y = -1;
-		map[i -3].id = 0; map[i - 3].x = -1; map[i - 3].y = -1;
+		map[i - 5].id = 0; map[i - 5].x = -1; map[i - 5].y = -1;
+		map[i - 4].id = 0; map[i - 4].x = -1; map[i - 4].y = -1;
+		map[i - 3].id = 0; map[i - 3].x = -1; map[i - 3].y = -1;
 
-		map[i-1].id = 0; map[i-1].x = -1; map[i-1].y = -1;
+		map[i - 1].id = 0; map[i - 1].x = -1; map[i - 1].y = -1;
 		map[i].id = 0; map[i].x = -1; map[i].y = -1;
 		map[i + 1].id = 0; map[i + 1].x = -1; map[i + 1].y = -1;
 		map[i + 2].id = 0; map[i + 2].x = -1; map[i + 2].y = -1;
@@ -924,7 +921,7 @@ void game::inti_2()
 	}
 	for (int i = 0; i < 10; i++)
 	{
-		int j=1, k=0;
+		int j = 1, k = 0;
 		if (i == 4)
 		{
 			j++;
@@ -1003,8 +1000,7 @@ void game::move()
 			k = 0;
 		if (_kbhit() && win == 0)//控制主角的上下左右的移动
 		{
-			if(game::pass==1)c = GetCommand1();		//c是通过按位或来进行复制的，这样可以使c保留多个信息
-			if (game::pass == 2)c = GetCommand2();
+			c = GetCommand();		//c是通过按位或来进行复制的，这样可以使c保留多个信息
 			if (c & CMD_LEFT)	//左
 				left();
 			if (c & CMD_RIGHT)	//有
@@ -1043,7 +1039,6 @@ void game::move()
 		}
 		if (-xmap + role.x > 95 * role.w)				//自动走出画面
 		{
-
 			win = 1;
 			role.x += STEP;
 			if (role.x - STEP > XSIZE)
@@ -1111,16 +1106,25 @@ void game::move()
 }
 void game::show()
 {
-	if (xmapsky == -XSIZE)
-		xmapsky = 0;
-	putimage(xmapsky, 0, &img_mapsky);	// 显示背景
-	putimage(XSIZE + xmapsky, 0, &img_mapsky);//两张背景图拼接覆盖原来的图片实现画面不会重叠
-
+	if (game::pass == 1)
+	{
+		if (xmapsky == -XSIZE)
+			xmapsky = 0;
+		putimage(xmapsky, 0, &img_mapsky);	// 显示背景
+		putimage(XSIZE + xmapsky, 0, &img_mapsky);//两张背景图拼接覆盖原来的图片实现画面不会重叠
+	}
+	else if (game::pass == 2)
+	{
+		if (xmapsky == -XSIZE)
+			xmapsky = 0;
+		putimage(xmapsky, 0,XSIZE,YSIZE, &img_mapsky,0,385);	// 显示背景
+		putimage(XSIZE + xmapsky, 0,XSIZE,YSIZE, &img_mapsky,0,385);//两张背景图拼接覆盖原来的图片实现画面不会重叠
+	}
 	if (is_touch() == 1)//判断是否吃到硬币
 		score_frame = 1;
 	if (score_frame != 0)					// 碰到硬币，显示得分
 	{
-		switch ((int)score_frame)
+		switch (int(score_frame))
 		{
 		case 1:
 			putimage(xmap + icoint.x, icoint.y, role.w, role.h, &img_ani, 0, 11 * role.h, SRCAND);
@@ -1373,7 +1377,7 @@ int game::isdie()
 	else
 		return 0;
 }
-int game::GetCommand1()
+int game::GetCommand()
 {
 	int c = 0;
 	//通过按位与的操作来得到按键信息
@@ -1385,25 +1389,6 @@ int game::GetCommand1()
 	if ((GetAsyncKeyState('W') & 0x8000) || (GetAsyncKeyState('K') & 0x8000))
 		c |= CMD_UP;
 	if (GetAsyncKeyState('S') & 0x8000)
-		c |= CMD_DOWN;
-	if (GetAsyncKeyState('J') & 0x8000)
-		c |= CMD_SHOOT;
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-		c |= CMD_ESC;
-	return c;
-}
-int game::GetCommand2()
-{
-	int c = 0;
-	//通过按位与的操作来得到按键信息
-	//通过按位或的复制操作保存多个按键信息
-	if (GetAsyncKeyState('D') & 0x8000)			//如果A被按下GetAsyncKeyState（“A”）会输出16位的二进制，且最高位是1，按位与后是1
-		c |= CMD_LEFT;
-	if (GetAsyncKeyState('A') & 0x8000)
-		c |= CMD_RIGHT;
-	if ((GetAsyncKeyState('S') & 0x8000) || (GetAsyncKeyState('K') & 0x8000))
-		c |= CMD_UP;
-	if (GetAsyncKeyState('W') & 0x8000)
 		c |= CMD_DOWN;
 	if (GetAsyncKeyState('J') & 0x8000)
 		c |= CMD_SHOOT;
@@ -2029,7 +2014,7 @@ void game::end()
 {
 	MyTimer tt;
 	EndBatchDraw();
-	//解决bug：在调出地图或者通关后按esc导致无法跳转页面
+	//解决bug：在掉出地图或者通关后按esc导致无法跳转页面
 	if (isdie() == 1 || win == 1)
 		pause = 0;
 	//如果是按暂停进入end，则退出
@@ -2045,10 +2030,11 @@ void game::end()
 
 	tt.Sleep(500);
 	//通过第一关
-	if (win == 1 && pass==1 )
+	if (game::win == 1 && pass==1 )
 	{
 		//转到第二关
 		pass++;
+		game::win = 0;
 		pause = 0;
 		score = 0;
 		//重置生命为3条
@@ -2065,7 +2051,7 @@ void game::end()
 		mciSendString("close mymusic13", NULL, 0, NULL);
 	}
 	//第二关通关
-	else if (win = 1 && pass == 2)
+	else if (game::win == 1 && pass == 2)
 	{
 		pause = 0;
 		score = 0;
@@ -2078,7 +2064,7 @@ void game::end()
 	}
 	//没有通关
 	else
-	{
+	{	
 		score = 0;
 		//生命值为0，游戏结束
 		if (life == 0)
@@ -2106,6 +2092,7 @@ void game::end()
 
 //初始化pass
 int game::pass = 1;
+int game::win = 0;
 
 void main()
 {
