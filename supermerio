@@ -838,6 +838,7 @@ void game::inti_2()
 	map[208].id = 1, map[208].x = 23 * role.w, map[208].y = 8 * role.h;
 
 	map[15].id = 1, map[15].x = 21 * role.w, map[15].y = 7 * role.h;
+	map[27].id = 1, map[27].x = 22 * role.w, map[27].y = 7 * role.h;
 	map[115].id = 1, map[115].x = 21 * role.w, map[115].y = 6 * role.h;
 	map[215].id = 1, map[215].x = 21 * role.w, map[215].y = 5 * role.h;
 
@@ -869,7 +870,7 @@ void game::inti_2()
 	map[301].id = 2, map[301].x = 11 * role.w, map[301].y = 6 * role.h;
 	map[302].id = 2, map[302].x = 12 * role.w, map[302].y = 6 * role.h;
 
-	map[303].id = 3, map[303].x = 32 * role.w, map[303].y = 7 * role.h;//放置水管图片
+	map[303].id = 3, map[303].x = 37 * role.w, map[303].y = 7 * role.h;//放置水管图片
 	map[304].id = 3, map[304].x = 44 * role.w, map[304].y = 7 * role.h;
 
 	map[305].id = 2, map[305].x = 40 * role.w, map[305].y = 4 * role.h;
